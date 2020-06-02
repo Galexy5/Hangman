@@ -28,7 +28,7 @@
 
             while @secret_word.length<5 || @secret_word.length>12 do
                 @secret_word=words.sample.downcase # set a random word to secret word
-                @secret_word=@secret_word[0..-3] # Im trimming the word because word ends with /n
+                @secret_word=@secret_word[0..-2] # Im trimming the word because word ends with /n
             end
 
             (1..@secret_word.length).each {|c| @correct_letters << "_"}
@@ -98,25 +98,30 @@
         end
 
         def load_game
-            puts "Type one of the following games to load:"
+            begin
             lines=File.readlines "load.json"
+            puts "Type one of the following games to load:"
             lines.each{|line|
             line=JSON.parse(line)
             puts line["name"]
             }
             name=gets.chomp.downcase
             lines.each{|line|
-                line=JSON.parse(line)
-                if line["name"]==name
-                    @secret_word=line["sw"]
-                    @correct_letters=line["cl"]
-                    @incorrect_letters=line["il"]
-                    @guesses_remaining=line["gr"]
-                    puts "\nGame is loaded !!!\n"
-                    display
-                    play_game(true)
-                end
+                    line=JSON.parse(line)
+                    if line["name"]==name
+                        @secret_word=line["sw"]
+                        @correct_letters=line["cl"]
+                        @incorrect_letters=line["il"]
+                        @guesses_remaining=line["gr"]
+                        puts "\nGame is loaded !!!\n"
+                        display
+                        play_game(true)
+                    end
                 }
+            rescue 
+              puts  "There is no game to load"    
+            end
+            
             
         end
 
