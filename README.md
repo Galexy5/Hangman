@@ -1,2 +1,2 @@
 # Hangman
-Hangman Game (for The Odin Project curriculum)
+Hangman Console Game in Ruby (for The Odin Project curriculum)
