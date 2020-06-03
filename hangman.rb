@@ -36,17 +36,6 @@
             play_game(true)
         end
 
-        def save_game (sw,cl,il,gr) #sw=secret_word, cl=correct_letters, il=incorrect_letters, gr=guesses_remaining
-            filename = "load.json"
-            print "Type a name to save your game: "
-            name=gets.chomp.to_s.downcase
-            line={ name: name, sw: sw, cl: cl, il: il, gr: gr }
-            File.open(filename,'a') do |file|
-            file.puts line.to_json
-            end
-            print "\nYour game is saved" 
-            play_again?
-        end
 
         def play_again?
             print "\nDo you want to play a new game ?  y/n: "
@@ -97,12 +86,37 @@
         end
         end
 
+
+        def save_game (sw,cl,il,gr) #sw=secret_word, cl=correct_letters, il=incorrect_letters, gr=guesses_remaining
+            filename = "load.json"
+            print "Type a name to save your game: "
+            name=gets.chomp.to_s.downcase
+
+            if File.file?(filename)   # Check if there is already a game saved with the same name
+                json_lines=File.readlines(filename)
+                json_lines.each{|l| 
+                    l=JSON.parse(l)
+                    while l["name"]==name do
+                        print "\nThere is another game with the same name\nType a different name: "
+                        name=gets.chomp.to_s.downcase
+                    end
+                }
+            end
+
+            line={ name: name, sw: sw, cl: cl, il: il, gr: gr }
+            File.open(filename,'a') do |file|
+            file.puts line.to_json
+            end
+            print "\nYour game is saved" 
+            play_again?
+        end
+
         def load_game
             begin
             lines=File.readlines "load.json"
             puts "Type one of the following games to load:"
             lines.each{|line|
-            line=JSON.parse(line)
+            line=JSON.parse(line)   # convert every line which is a string to hash
             puts line["name"]
             }
             name=gets.chomp.downcase
